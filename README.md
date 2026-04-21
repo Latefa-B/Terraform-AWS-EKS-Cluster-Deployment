@@ -1,70 +1,67 @@
-# Terraform-AWS-EKS-Cluster-Deployment
-Deploying a Kubernetes Cluster (EKS) on AWS with Terraform
-
-
-
-Introduction
+# Step-by-step Guide to Deploying a Kubernetes Cluster (EKS) on AWS with Terraform
 Kubernetes is an open-source platform for automating deployment, scaling, and management of containerized applications. It introduces the Pod as the smallest deployable unit. The Pod encapsulates one or more containers that share the same network, namespace and can access shared storage volumes. This abstraction allows Kubernetes to manage groups of tightly coupled containers as a single logical unit, simplifying communication and coordination. Kubernetes as an orchestration tool for containers, allows them to run reliably, scale up and down, and communicate with each other across many servers, making sure the application is always running and has enough resources.
 
 Previously, we demonstrated how to deploy applications using Minikube and Kubernetes core concepts like : Pods, Deployments, Services, Persistent Storage, ConfigMaps, Secrets, and StatefulSets. Minikube is excellent for local development and learning, but in the real world, you need a highly available and scalable Kubernetes cluster.
 
 To address this, Amazon Elastic Kubernetes Service (EKS) comes in as a solution. EKS is a fully managed Kubernetes service that makes it easy to run Kubernetes on AWS. AWS takes care of the Kubernetes control plane (the brains of the cluster), so you only need to worry about your worker nodes or use Fargate.
-This comprehensive step-by-step guide walks you through the process of deploying a Kubernetes Cluster (EKS) on AWS with Terraform. In this lab, we will use Terraform to provision an EKS cluster on AWS. This is a significant step, as it combines your knowledge of Infrastructure as Code with Kubernetes. You'll learn how to define an EKS cluster, its networking, and its worker nodes using Terraform code, and then connect your local kubectl to this cloud cluster. The aim of this lab is to learn :  
-What AWS EKS is and its benefits.
-How to use Terraform to define and provision an EKS cluster.
-How to configure networking (VPC, subnets, security groups) for EKS.
-How to provision worker nodes (EC2 instances) for your EKS cluster.
-How to connect your local kubectl to your remote EKS cluster.
-The importance of IAM roles and policies for EKS.
 
-Prerequisites
-Have completed Lab 13 and understand core Kubernetes concepts.
-Set up an AWS Account : With sufficient permissions to create VPCs, EC2 instances, IAM roles, and EKS clusters. 
-Have Terraform, kubectl and AWS CLI  Installed and AWS account credentials configured.
-Have aws-iam-authenticator Installed: This is a tool that allows kubectl to authenticate to EKS using AWS IAM credentials.
+This comprehensive step-by-step guide walks you through the process of deploying a Kubernetes Cluster (EKS) on AWS with Terraform. In this project, we will use Terraform to provision an EKS cluster on AWS. This is a significant step, as it combines your knowledge of Infrastructure as Code with Kubernetes. You'll learn how to define an EKS cluster, its networking, and its worker nodes using Terraform code, and then connect your local kubectl to this cloud cluster. The aim of this project is to learn :  
 
-Step-by-step instructions
+- What AWS EKS is and its benefits.
+- How to use Terraform to define and provision an EKS cluster.
+- How to configure networking (VPC, subnets, security groups) for EKS.
+- How to provision worker nodes (EC2 instances) for your EKS cluster.
+- How to connect your local kubectl to your remote EKS cluster.
+- The importance of IAM roles and policies for EKS.
 
+## Prerequisites
+- Have understood core Kubernetes concepts.
+- Set up an AWS Account : With sufficient permissions to create VPCs, EC2 instances, IAM roles, and EKS clusters. 
+- Have Terraform, kubectl and AWS CLI  Installed and AWS account credentials configured.
+- Have aws-iam-authenticator Installed: This is a tool that allows kubectl to authenticate to EKS using AWS IAM credentials.
+<img width="615" height="260" alt="0" src="https://github.com/user-attachments/assets/616c1bed-c448-47b7-9008-3da49ba6213a" />
 
-Step 1: Create Your Terraform Configuration for EKS
-In this lab, we will Deploy a Kubernetes Cluster (EKS) on AWS with Terraform. This involves several components: the EKS cluster itself, the IAM roles and policies it needs to operate, the networking (VPC, subnets, internet gateway, route tables), and the worker nodes where your applications will run. We'll put these into several .tf files for better organization. To complete Step 1 follow the instructions below : 
+## Step-by-step instructions :
+### Step 1: Create Your Terraform Configuration for EKS
+In this project, we will Deploy a Kubernetes Cluster (EKS) on AWS with Terraform. This involves several components: the EKS cluster itself, the IAM roles and policies it needs to operate, the networking (VPC, subnets, internet gateway, route tables), and the worker nodes where your applications will run. We'll put these into several .tf files for better organization. To complete Step 1 follow the instructions below : 
+- Create a new folder on your computer named eks-cluster-terraform.
+- Inside eks-cluster-terraform, create the following files: main.tf variables.tf outputs.tf vpc.tf eks-cluster.tf eks-nodes.tf iam.tf 
+- Open each file and paste the corresponding content below.
+<img width="1089" height="587" alt="1" src="https://github.com/user-attachments/assets/1d1b4340-8d43-45db-8385-70da84c2afad" />
+<img width="788" height="771" alt="2" src="https://github.com/user-attachments/assets/d4fb15a2-5f50-4a6e-a9d0-36ec27a51517" />
+<img width="613" height="466" alt="3" src="https://github.com/user-attachments/assets/49464a23-2033-4e4d-a40a-e408d2903729" />
+<img width="802" height="822" alt="4" src="https://github.com/user-attachments/assets/6b54b99b-2c87-4f62-b5aa-7d2dbc1aaabc" />
+<img width="835" height="374" alt="5" src="https://github.com/user-attachments/assets/8b0baac6-66b2-47f7-94a2-de55f00351e8" />
+<img width="853" height="802" alt="6" src="https://github.com/user-attachments/assets/618c3d78-0973-4155-bbed-b634fb404312" />
+<img width="847" height="198" alt="7" src="https://github.com/user-attachments/assets/518dcc17-9fdf-4c8e-b1f1-01f2147ccae1" />
+<img width="715" height="357" alt="8" src="https://github.com/user-attachments/assets/86adc5f5-1752-419c-959c-2bb589def396" />
+<img width="687" height="862" alt="9" src="https://github.com/user-attachments/assets/70921c4d-7bc2-45d4-a3bf-dbed8b34762d" />
+<img width="903" height="867" alt="10" src="https://github.com/user-attachments/assets/364a4cf8-5f68-41f7-9995-624a56c4ecee" />
+<img width="715" height="346" alt="11" src="https://github.com/user-attachments/assets/ad50b345-82ea-462c-8e90-d4f4b38c5da1" />
 
-Create a new folder on your computer named eks-cluster-terraform.
-Inside eks-cluster-terraform, create the following files: main.tf variables.tf outputs.tf vpc.tf eks-cluster.tf eks-nodes.tf iam.tf 
-Open each file and paste the corresponding content below.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-Save all files. Your eks-cluster-terraform folder structure should look like this:
+- Save all files. Your eks-cluster-terraform folder structure should look like this:
+<img width="473" height="180" alt="12" src="https://github.com/user-attachments/assets/91df8ea1-855d-46f0-9e73-7bec69aaa77e" />
 
 
-Step 2: Initialize and Apply Terraform Configuration
-
+### Step 2: Initialize and Apply Terraform Configuration
 Now that all your Terraform files are ready, you'll initialize Terraform to download providers and then apply the configuration to create the EKS cluster and its worker nodes in your AWS account. To complete Step 2 follow the instructions below : 
+- Open your command line or terminal and navigate to your eks-cluster-terraform folder
+- Initialize Terraform using the command : terraform init. 
+**Expected output** : You should see messages indicating providers are being downloaded.
+<img width="609" height="407" alt="13" src="https://github.com/user-attachments/assets/cbf368d5-fc6e-4602-a104-30a3957d65bc" />
 
-Open your command line or terminal and navigate to your eks-cluster-terraform folder
-​Initialize Terraform using the command : terraform init. 
-
-Expected output : You should see messages indicating providers are being downloaded.
-
-
-
-
-Plan your infrastructure changes using the command : terraform plan. Review the plan carefully. 
-
-Expected output : You will see many resources (VPC, subnets, security groups, IAM roles, EKS cluster, EC2 instances, Auto Scaling Group) being added.
+- Plan your infrastructure changes using the command : terraform plan. Review the plan carefully. 
+**Expected output** : You will see many resources (VPC, subnets, security groups, IAM roles, EKS cluster, EC2 instances, Auto Scaling Group) being added.
+<img width="981" height="876" alt="14" src="https://github.com/user-attachments/assets/ddc5bfc5-08e4-40a4-9efd-04b6a0e348eb" />
+<img width="627" height="839" alt="15" src="https://github.com/user-attachments/assets/6d9d8aba-44c6-4b56-89cb-40a1b759f6fa" />
+<img width="562" height="872" alt="16" src="https://github.com/user-attachments/assets/694caf9c-b94e-4288-92ce-a74cad3e406a" />
+<img width="695" height="878" alt="17" src="https://github.com/user-attachments/assets/4a7f4cad-9456-4d0d-9be7-452819a76b63" />
+<img width="747" height="869" alt="18" src="https://github.com/user-attachments/assets/5cd2ea60-c3a1-4160-86f9-4b5b0d23d729" />
+<img width="681" height="829" alt="19" src="https://github.com/user-attachments/assets/62f9248e-c939-434e-a10e-25a146e083ce" />
+<img width="622" height="872" alt="20" src="https://github.com/user-attachments/assets/e121a9f5-f766-42c9-bca2-c910fa0048ab" />
+<img width="599" height="872" alt="21" src="https://github.com/user-attachments/assets/ef01e39f-c994-44bd-872f-265bad528ec7" />
+<img width="642" height="815" alt="22" src="https://github.com/user-attachments/assets/2435fd04-873f-4ee8-9d42-eac8fe79fc21" />
+<img width="1112" height="587" alt="23" src="https://github.com/user-attachments/assets/f9db7a49-8100-45b6-b99c-18dce16edb43" />
 
 
 
